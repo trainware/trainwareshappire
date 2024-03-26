@@ -182,29 +182,31 @@ void loop() {
   Serial.print("Distance (inch): ");
   Serial.println(jarakINCH);
   
+  /*=================================================== FLAME SENSOR ===========*/
+  // Deklarasi variable pembacaan FlameSensor
+  int firesensorDigital = digitalRead(flameDigPin);
+
+  // Menampilkan hasil pembacaan Digital untuk sensor
+  Serial.print("Fire Class: ");
+  Serial.println(firesensorDigital);
+
   /*=================================================== RELAY ===========*/
-  if(jarakCM < 20){
+  if(firesensorDigital == 1){
     // Jika modul Relay Normally Closed
     // Maka arus mengalir pada logic LOW
     digitalWrite(relayPin, LOW);
-    Serial.println("low");
+    Serial.println("Relay low");
   }
-  else if (jarakCM >= 20 && jarakCM <=40){
+  else{
     // Jika modul Relay Normally High
     // Maka arus mengalir pada logic HIGH
     digitalWrite(relayPin, HIGH);
-    Serial.println("high");
-  }
-  else if (jarakCM >= 40 && jarakCM <=60){
-    // Jika modul Relay Normally High
-    // Maka arus mengalir pada logic HIGH
-    digitalWrite(relayPin, HIGH);
-    Serial.println("high");
+    Serial.println("Relay high");
   }
 
   /*=================================================== RFID ===========*/
-  if (rfid.PICC_IsNewCardPresent()) { // new tag is available
-      if (rfid.PICC_ReadCardSerial()) { // NUID has been readed
+  if (rfid.PICC_IsNewCardPresent()) { // Jika ada kartu yang terdeteksi
+      if (rfid.PICC_ReadCardSerial()) { // Membaca UID apakah ada ?
         MFRC522::PICC_Type piccType = rfid.PICC_GetType(rfid.uid.sak);
         Serial.print("RFID/NFC Tag Type: ");
         Serial.println(rfid.PICC_GetTypeName(piccType));
@@ -217,8 +219,8 @@ void loop() {
         }
         Serial.println();
 
-        rfid.PICC_HaltA(); // halt PICC
-        rfid.PCD_StopCrypto1(); // stop encryption on PCD
+        rfid.PICC_HaltA(); 
+        rfid.PCD_StopCrypto1(); 
       }
     }
 
@@ -231,14 +233,6 @@ void loop() {
   ledcWrite(ledChannel1, RGB_pwmG); 
   ledcWrite(ledChannel2, RGB_pwmB); 
 
-  /*=================================================== FLAME SENSOR ===========*/
-  // Deklarasi variable pembacaan FlameSensor
-  int firesensorDigital = digitalRead(flameDigPin);
-
-  // Menampilkan hasil pembacaan Digital untuk sensor
-  Serial.print("Fire Class: ");
-  Serial.println(firesensorDigital);
-
   /*=================================================== LCD ===========*/
   // Mengatur posisi text pada X = 0 ; Y = 0.
   lcd.clear(); 
@@ -250,6 +244,10 @@ void loop() {
   lcd.setCursor(9, 0);
   // Text yang ditampilkan
   lcd.print(jarakCM);
+  // Mengatur posisi text pada X = 9 ; Y = 0.
+  lcd.setCursor(14, 0);
+  // Text yang ditampilkan
+  lcd.print("CM");
    
   // Mengatur posisi text pada X = 0 ; Y = 1.
   lcd.setCursor(0,1);
@@ -257,11 +255,9 @@ void loop() {
   lcd.print("Flame:");
   
   // Mengatur posisi text pada X = 9 ; Y = 1.
-  lcd.setCursor(9,1);
+  lcd.setCursor(7,1);
   // Text yang ditampilkan
   lcd.print(firesensorDigital);
-  
- 
   
   /*=================================================== GAS ===========*/
   // Deklarasi variable untuk menyimpan Nilai Pembacaan sensor Gas
