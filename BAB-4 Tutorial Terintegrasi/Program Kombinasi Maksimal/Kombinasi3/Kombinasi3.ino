@@ -185,12 +185,12 @@ void loop() {
     Serial.println("low");
   }
   else if (voltage >= 1 && voltage <=2){
-    digitalWrite(relayPin, LOW);
-    Serial.println("low");
-  }
-  else if (voltage > 2){
     digitalWrite(relayPin, HIGH);
     Serial.println("high");
+  }
+  else if (voltage > 2){
+    digitalWrite(relayPin, LOW);
+    Serial.println("low");
   }
 
   /*=================================================== RFID ===========*/

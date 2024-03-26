@@ -24,13 +24,8 @@ void setup() {
 
 void loop() {
   // Fungsi gerakan servo dari 0 derajat hingga 180 derajat
-  for (pos = 0; pos <= 180; pos += 1) {
-    myservo.write(pos);              
-    delay(15);
-  }
-  // Fungsi gerakan servo dari 180 derajat hingga 0 derajat
-  for (pos = 180; pos >= 0; pos -= 1) { 
-    myservo.write(pos);              
-    delay(15);                       
-  }
+    myservo.write(0);              
+    delay(2000);
+    myservo.write(180);              
+    delay(2000);                      
 }

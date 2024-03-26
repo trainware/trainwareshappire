@@ -12,35 +12,10 @@
 // Inisialisasi Library Servo.h
 #include <Servo.h>
 
-/* NOTE:
-
-SENSOR PIR MASIH BELUM OK
-
-*/
 
 /*=================================================== PIR ===========*/
-// Mendefinisikan waktu pembacaan tiap 10 detik
-#define waktuBaca 10
-
 // Mendefinisikan pin motionSensor pada ESP32
-#define led 2
-#define motionSensor 25
-
-// Inisialisasi Variable now (waktu sekarang) & lastTrigger (logic)
-unsigned long now = millis();
-unsigned long lastTrigger = 0;
-
-// Inisialisasi variable Logic untuk startTimer
-boolean startTimer = false;
-
-// Fungsi INTERRUPT esp32 (IRAM_ATTR)
-// dieksekusi ketika terdeteksi pergerakan
-void IRAM_ATTR detectsMovement() {
-  Serial.println("MOTION DETECTED!!!");
-  digitalWrite(led, HIGH);
-  startTimer = true;
-  lastTrigger = millis();
-}
+#define pin_PIR 25
 
 /*=================================================== ADD LED ===========*/
 // Mendefinisikan pin LED pada ESP32
@@ -73,11 +48,12 @@ Keypad keypad = Keypad( makeKeymap(keys), pin_rows, pin_column, ROW_NUM, COL_NUM
 
 /*=================================================== SOIL SENSE ===========*/
 // Mendefinisikan pin Soil Sensor pada ESP32
-#define soilPin  36
-#define soilPinAnalog  39
+#define soilPinAnalog  36
+#define soilPinDigital  39
 
-// Deklarasi Variable Integer "value" untuk menyimpan nilai
+// Deklarasi Variable Integer "value" dan "value_soil" untuk menyimpan nilai
 int value;
+int value_soil;
 
 /*=================================================== LCD ===========*/
 // atur jumlah Baris-Kolom LCD yang digunakan 
@@ -117,14 +93,7 @@ void setup() {
   Serial.begin(115200);
 
   // Meng set Pin motionSensor menjadi Mode Input PullUP
-  pinMode(motionSensor, INPUT_PULLUP);
-
-  // Meng set Pin motionSensor sebagai Interrupt, ketika Sinyal RISING
-  // attachInterrupt(digitalPinToInterrupt(motionSensor), detectsMovement, RISING);
-
-  // Meng set LED ke Nilai LOW (off)
-  pinMode(led, OUTPUT);
-  digitalWrite(led, LOW);
+  pinMode(pin_PIR, INPUT);
 
   /*=================================================== ADD LED ===========*/
   // Meng set Pin LED sebagai OUTPUT
@@ -136,7 +105,7 @@ void setup() {
   /*=================================================== KEYPAD ===========*/
 
   /*=================================================== SOIL SENSE ===========*/
-  pinMode(soilPinAnalog, INPUT);  
+  pinMode(soilPinDigital, INPUT);  
 
   /*=================================================== LCD ===========*/
   // Inisialisasi LCD
@@ -176,15 +145,20 @@ void setup() {
 void loop() {
   
   /*=================================================== PIR ===========*/
-  // Fungsi untuk menyimpan counter waktu (ms) sejak dihidupkan / direset
-  // now = millis();
+  // fungsi untuk mengambil data pembacaan sensor PIR
+  bool state_pir = digitalRead(pin_PIR);
+  
+  // jika kondisi terbaca = 0, maka serial akan menampilkan 
+  // "Motion Tidak Terdeteksi"
+  if (state_pir == 0){
+    Serial.println("Motion Tidak Terdeteksi");  
+  } 
+  // jika kondisi terbaca 1, maka serial akan menampilkan 
+  // "Motion Terdeteksi"
+  else {
+    Serial.println("Motion Terdeteksi");
 
-  // // Mematikan LED setelah 10 detik dari Kondisi Terakhir mendeteksi pergerakan
-  // if (startTimer && (now - lastTrigger > (waktuBaca * 1000))) {
-  //   Serial.println("Motion stopped...");
-  //   digitalWrite(led, LOW);
-  //   startTimer = false;
-  // }
+  }
 
   /*=================================================== ADD LED ===========*/
   digitalWrite(LED_1, HIGH);
@@ -221,16 +195,16 @@ void loop() {
 
   /*=================================================== SOIL SENSE ===========*/
   // Fungsi mengambil data Analog Soil Sensor dengan ADC
-  value = analogRead(soilPin);
+  value_soil = analogRead(soilPinAnalog);
 
   // Rescale data ADC dari Soil Sensor
   // Rescale nilai 550-0 menjadi 0-100
-  value = map(value,225,0,0,100);
+  value = map(value_soil,225,0,0,100);
   Serial.print("Moisture : ");
-  Serial.print(value);
+  Serial.print(value_soil);
   Serial.println("%");
-  Serial.print(" Hasil D0 :");
-  Serial.println(digitalRead(soilPinAnalog));
+  Serial.print("Hasil D0 :");
+  Serial.println(digitalRead(soilPinDigital));
 
   /*=================================================== LCD ===========*/
   // Mengatur posisi text pada X = 0 ; Y = 0.
@@ -253,7 +227,7 @@ void loop() {
   // Text yang ditampilkan
   lcd.print(key);
   
-  lcd.clear(); 
+  
 
   /*=================================================== RAIN ===========*/
    // Membaca nilai ADC dari sensor Air hujan
@@ -277,7 +251,7 @@ void loop() {
     // Fungsi menampilkan Text
     display.println("Servo"); 
 
-    display.setCursor(0, 20);
+    display.setCursor(0, 35);
     // Fungsi menampilkan Text
     display.println(pos);
     display.display();              
@@ -292,10 +266,11 @@ void loop() {
     // Fungsi menampilkan Text
     display.println("Servo"); 
 
-    display.setCursor(0, 20);
+    display.setCursor(0, 35);
     // Fungsi menampilkan Text
     display.println(pos);
     display.display();              
     delay(15);                       
   }
+  lcd.clear(); 
 }
