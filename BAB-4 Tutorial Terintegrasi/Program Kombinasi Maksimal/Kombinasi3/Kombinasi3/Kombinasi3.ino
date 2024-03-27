@@ -19,10 +19,15 @@
 
 /*=================================================== LED ===========*/
 // Mendefinisikan pin LED pada ESP32
-#define LED_1   32
-#define LED_2   33
-#define LED_3   27
-#define LED_4   2
+#define pin_LED_1   32
+#define pin_LED_2   33
+#define pin_LED_3   27
+#define pin_LED_4   2
+
+bool t_LED_1=LOW;
+bool t_LED_2=LOW;
+bool t_LED_3=LOW;
+bool t_LED_4=LOW;
 
 /*=================================================== RFID ===========*/
 // Mendefinisikan Pin RFID pada ESP32
@@ -92,6 +97,7 @@ Servo myservo;
 int pos = 0; 
 
 String strbuff_uid="";
+String savelast_uid="";
 
 void setup() {
   
@@ -104,10 +110,10 @@ void setup() {
 
   /*=================================================== ADD LED ===========*/
   // Meng set Pin LED sebagai OUTPUT
-  pinMode(LED_1, OUTPUT);
-  pinMode(LED_2, OUTPUT);
-  pinMode(LED_3, OUTPUT);
-  pinMode(LED_4, OUTPUT);
+  pinMode(pin_LED_1, OUTPUT);
+  pinMode(pin_LED_2, OUTPUT);
+  pinMode(pin_LED_3, OUTPUT);
+  pinMode(pin_LED_4, OUTPUT);
 
   /*=================================================== RFID ===========*/
 
@@ -173,6 +179,8 @@ void loop() {
   int analogValue = analogRead(36);
   // Rescale Nilai yang dibaca dari ADC (0-4095 menjadi 0-3,3V)
   float voltage = floatMap(analogValue, 0, 4095, 0, 3.3);
+  // Rescale Nilai yang dibaca dari ADC (0-4095 menjadi 0-100%)
+  int percentage = floatMap(analogValue, 0, 4095, 0, 100);
 
   // Mencetak Nilai Mentah ADC yang didapat (0-4095)
   Serial.print("Analog: ");
@@ -182,17 +190,24 @@ void loop() {
   Serial.print(", Voltage: ");
   Serial.println(voltage);
 
+  /*=================================================== SERVO ===========*/
+  int pos = floatMap(analogValue, 0, 4095, 0, 180);
+
+  myservo.write(pos);
+
   /*=================================================== OLED ===========*/
   
   display.clearDisplay();
   
   // Fungsi menampilkan Text
   display.setCursor(0, 10);
-  display.println("POT Volt"); 
-
+  display.println("POT Value"); 
   // Fungsi menampilkan Text
   display.setCursor(0, 35);
-  display.println(voltage);
+  display.println(String(voltage) + "V");
+  // Fungsi menampilkan Text
+  display.setCursor(70, 35);
+  display.println(String(percentage) + "%");
   
   display.display();              
   delay(15);
@@ -217,16 +232,19 @@ void loop() {
       MFRC522::PICC_Type piccType = rfid.PICC_GetType(rfid.uid.sak);
       Serial.print("RFID/NFC Tag Type: ");
       Serial.println(rfid.PICC_GetTypeName(piccType));
+      strbuff_uid="";
 
       // print UID in Serial Monitor in the hex format
       Serial.print("UID:");
       for (int i = 0; i < rfid.uid.size; i++) {
-        Serial.print(rfid.uid.uidByte[i] < 0x10 ? " 0" : " ");
+        // Serial.print(rfid.uid.uidByte[i] < 0x10 ? " 0" : " ");
+        // Serial.print(rfid.uid.uidByte[i], HEX);
         strbuff_uid+=rfid.uid.uidByte[i] < 0x10 ? " 0" : " ";
         strbuff_uid+=String(rfid.uid.uidByte[i], HEX);
-        Serial.print(rfid.uid.uidByte[i], HEX);
       }
       Serial.println();
+      strbuff_uid.toUpperCase();
+      strbuff_uid.remove(0,1);
       Serial.print(strbuff_uid);
 
       rfid.PICC_HaltA(); // halt PICC
@@ -236,19 +254,18 @@ void loop() {
 
   /*=================================================== LCD ===========*/
   // Mengatur posisi text pada X = 0 ; Y = 0.
+  lcd.setCursor(0, 1);
+  // Text yang ditampilkan
+  lcd.print(strbuff_uid);
+
   lcd.setCursor(0, 0);
   // Text yang ditampilkan
   lcd.print("UID RFID:");
-  
-  // Mengatur posisi text pada X = 9 ; Y = 0.
-  lcd.setCursor(9, 0);
-  // Text yang ditampilkan
-  lcd.print(analogValue);
    
   // Mengatur posisi text pada X = 0 ; Y = 1.
-  lcd.setCursor(0,1);
+  lcd.setCursor(12,0);
   // Text yang ditampilkan
-  lcd.print("Button:");
+  lcd.print("BTN:");
 
   /*=================================================== RGB ===========*/
   RGB_val = floatMap(analogValue, 0, 4095, 0, 255);
@@ -262,32 +279,35 @@ void loop() {
   
   
   /*=================================================== BUTTON ===========*/
-  // Mengatur posisi text pada X = 8 ; Y = 1.
-  lcd.setCursor(8,1);
-  // Text yang ditampilkan
-  lcd.print(digitalRead(BUTTON_PIN1));
-
-  // Mengatur posisi text pada X = 10 ; Y = 1.
-  lcd.setCursor(10,1);
-  // Text yang ditampilkan
-  lcd.print(digitalRead(BUTTON_PIN2));
-
+  if(digitalRead(BUTTON_PIN1))t_LED_1=!t_LED_1;
+  digitalWrite(pin_LED_1, t_LED_1);
+  if(digitalRead(BUTTON_PIN2))t_LED_2=!t_LED_2;
+  digitalWrite(pin_LED_2, t_LED_2);
+  if(digitalRead(BUTTON_PIN3))t_LED_3=!t_LED_3;
+  digitalWrite(pin_LED_3, t_LED_3);
+  if(digitalRead(BUTTON_PIN4))t_LED_4=!t_LED_4;
+  digitalWrite(pin_LED_4, t_LED_4);
   // Mengatur posisi text pada X = 12 ; Y = 1.
   lcd.setCursor(12,1);
   // Text yang ditampilkan
-  lcd.print(digitalRead(BUTTON_PIN3));
+  lcd.print(digitalRead(BUTTON_PIN1));
+
+  // Mengatur posisi text pada X = 13 ; Y = 1.
+  lcd.setCursor(13,1);
+  // Text yang ditampilkan
+  lcd.print(digitalRead(BUTTON_PIN2));
 
   // Mengatur posisi text pada X = 14 ; Y = 1.
   lcd.setCursor(14,1);
   // Text yang ditampilkan
+  lcd.print(digitalRead(BUTTON_PIN3));
+
+  // Mengatur posisi text pada X = 15 ; Y = 1.
+  lcd.setCursor(15,1);
+  // Text yang ditampilkan
   lcd.print(digitalRead(BUTTON_PIN4));
 
-  /*=================================================== SERVO ===========*/
-  int pos = floatMap(analogValue, 0, 4095, 0, 180);
-
-  myservo.write(pos);
-  
-  delay(100);
+  delay(50);
   
   lcd.clear(); 
 
