@@ -12,7 +12,6 @@
 // Inisialisasi Library Servo.h
 #include <Servo.h>
 
-
 /*=================================================== PIR ===========*/
 // Mendefinisikan pin motionSensor pada ESP32
 #define pin_PIR 25
@@ -104,8 +103,6 @@ void setup() {
   pinMode(LED_3, OUTPUT);
   pinMode(LED_4, OUTPUT);
   
-  /*=================================================== KEYPAD ===========*/
-
   /*=================================================== SOIL SENSE ===========*/
   pinMode(soilPinDigital, INPUT);  
 

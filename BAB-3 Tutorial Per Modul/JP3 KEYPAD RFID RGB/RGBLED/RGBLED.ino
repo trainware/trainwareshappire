@@ -4,9 +4,9 @@
 =================== */
 
 // Mendefinisikan pin RGB pada ESP32
-#define pin_RGB_R   4
-#define pin_RGB_G   2
-#define pin_RGB_B   15
+#define pin_RGB_R   15
+#define pin_RGB_G   14
+#define pin_RGB_B   4
 
 // Mendefinisikan variable ledChannel
 #define ledChannel1 0

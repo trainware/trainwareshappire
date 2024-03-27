@@ -33,15 +33,15 @@ MFRC522 rfid(SS_PIN, RST_PIN);
 
 /*=================================================== RGB ===========*/
 // Mendefinisikan pin RGB pada ESP32
-#define RGB_R   4
-#define RGB_G   14
-#define RGB_B   15
+#define pin_RGB_R   15
+#define pin_RGB_G   14
+#define pin_RGB_B   4
 
 // Deklarasi PWM properties
 const int freq = 5000;
-const int ledChannel1 = 0;
-const int ledChannel2 = 1;
-const int ledChannel3 = 2;
+const int ledChannel1 = 1;
+const int ledChannel2 = 2;
+const int ledChannel3 = 3;
 const int resolution = 8;
  
 // Deklarasi nilai PWM pada Variable
@@ -49,6 +49,7 @@ int RGB_pwmR = 0;
 int RGB_pwmG = 0;
 int RGB_pwmB = 0;
 
+float RGB_val=0;
 
 /*=================================================== POTENSIOMETER ===========*/
 float floatMap(float x, float in_min, float in_max, float out_min, float out_max) {
@@ -90,6 +91,8 @@ Servo myservo;
 // Inisialisasi Variable pos (posisi servo)
 int pos = 0; 
 
+String strbuff_uid="";
+
 void setup() {
   
   // Inisialiasasi Serial, dengan baudrate 115200
@@ -120,9 +123,9 @@ void setup() {
   ledcSetup(ledChannel3, freq, resolution);
   
   // attach the channel to the GPIO to be controlled
-  ledcAttachPin(RGB_R, ledChannel1);
-  ledcAttachPin(RGB_G, ledChannel2);
-  ledcAttachPin(RGB_B, ledChannel3);
+  ledcAttachPin(pin_RGB_R, ledChannel1);
+  ledcAttachPin(pin_RGB_G, ledChannel2);
+  ledcAttachPin(pin_RGB_B, ledChannel3);
 
   /*=================================================== LCD ===========*/
   // Inisialisasi LCD
@@ -151,10 +154,10 @@ void setup() {
 
   /*=================================================== ADD BUTTON ===========*/
   // initialize the pushbutton pin as an pull-up input
-  pinMode(BUTTON_PIN1, INPUT);
-  pinMode(BUTTON_PIN2, INPUT);
-  pinMode(BUTTON_PIN3, INPUT);
-  pinMode(BUTTON_PIN4, INPUT);
+  pinMode(BUTTON_PIN1, INPUT_PULLDOWN);
+  pinMode(BUTTON_PIN2, INPUT_PULLDOWN);
+  pinMode(BUTTON_PIN3, INPUT_PULLDOWN);
+  pinMode(BUTTON_PIN4, INPUT_PULLDOWN);
 
   /*=================================================== SERVO ===========*/
   // Inisialisasi start Servo 
@@ -179,6 +182,21 @@ void loop() {
   Serial.print(", Voltage: ");
   Serial.println(voltage);
 
+  /*=================================================== OLED ===========*/
+  
+  display.clearDisplay();
+  
+  // Fungsi menampilkan Text
+  display.setCursor(0, 10);
+  display.println("POT Volt"); 
+
+  // Fungsi menampilkan Text
+  display.setCursor(0, 35);
+  display.println(voltage);
+  
+  display.display();              
+  delay(15);
+
   /*=================================================== RELAY ===========*/
   if(voltage < 1){
     digitalWrite(relayPin, LOW);
@@ -195,36 +213,32 @@ void loop() {
 
   /*=================================================== RFID ===========*/
   if (rfid.PICC_IsNewCardPresent()) { // new tag is available
-      if (rfid.PICC_ReadCardSerial()) { // NUID has been readed
-        MFRC522::PICC_Type piccType = rfid.PICC_GetType(rfid.uid.sak);
-        Serial.print("RFID/NFC Tag Type: ");
-        Serial.println(rfid.PICC_GetTypeName(piccType));
+    if (rfid.PICC_ReadCardSerial()) { // NUID has been readed
+      MFRC522::PICC_Type piccType = rfid.PICC_GetType(rfid.uid.sak);
+      Serial.print("RFID/NFC Tag Type: ");
+      Serial.println(rfid.PICC_GetTypeName(piccType));
 
-        // print UID in Serial Monitor in the hex format
-        Serial.print("UID:");
-        for (int i = 0; i < rfid.uid.size; i++) {
-          Serial.print(rfid.uid.uidByte[i] < 0x10 ? " 0" : " ");
-          Serial.print(rfid.uid.uidByte[i], HEX);
-        }
-        Serial.println();
-
-        rfid.PICC_HaltA(); // halt PICC
-        rfid.PCD_StopCrypto1(); // stop encryption on PCD
+      // print UID in Serial Monitor in the hex format
+      Serial.print("UID:");
+      for (int i = 0; i < rfid.uid.size; i++) {
+        Serial.print(rfid.uid.uidByte[i] < 0x10 ? " 0" : " ");
+        strbuff_uid+=rfid.uid.uidByte[i] < 0x10 ? " 0" : " ";
+        strbuff_uid+=String(rfid.uid.uidByte[i], HEX);
+        Serial.print(rfid.uid.uidByte[i], HEX);
       }
-    }
+      Serial.println();
+      Serial.print(strbuff_uid);
 
-  /*=================================================== RGB ===========*/
-  float RGB_val = floatMap(analogValue, 0, 4095, 0, 255);
-  RGB_pwmR = RGB_pwmG = RGB_pwmB = RGB_val ;
-  ledcWrite(ledChannel3, RGB_pwmR);
-  ledcWrite(ledChannel1, RGB_pwmG); 
-  ledcWrite(ledChannel2, RGB_pwmB); 
+      rfid.PICC_HaltA(); // halt PICC
+      rfid.PCD_StopCrypto1(); // stop encryption on PCD
+    }
+  }
 
   /*=================================================== LCD ===========*/
   // Mengatur posisi text pada X = 0 ; Y = 0.
   lcd.setCursor(0, 0);
   // Text yang ditampilkan
-  lcd.print("Val-Pot:");
+  lcd.print("UID RFID:");
   
   // Mengatur posisi text pada X = 9 ; Y = 0.
   lcd.setCursor(9, 0);
@@ -235,6 +249,17 @@ void loop() {
   lcd.setCursor(0,1);
   // Text yang ditampilkan
   lcd.print("Button:");
+
+  /*=================================================== RGB ===========*/
+  RGB_val = floatMap(analogValue, 0, 4095, 0, 255);
+  RGB_pwmR = RGB_val;
+  RGB_pwmG = RGB_val;
+  RGB_pwmB = RGB_val;
+  ledcWrite(ledChannel1, RGB_pwmR); 
+  ledcWrite(ledChannel2, RGB_pwmG); 
+  ledcWrite(ledChannel3, RGB_pwmB);
+
+  
   
   /*=================================================== BUTTON ===========*/
   // Mengatur posisi text pada X = 8 ; Y = 1.
@@ -256,28 +281,15 @@ void loop() {
   lcd.setCursor(14,1);
   // Text yang ditampilkan
   lcd.print(digitalRead(BUTTON_PIN4));
-  
-  lcd.clear(); 
 
   /*=================================================== SERVO ===========*/
   int pos = floatMap(analogValue, 0, 4095, 0, 180);
 
   myservo.write(pos);
-  /*=================================================== OLED ===========*/
   
-  display.clearDisplay();
+  delay(100);
   
-  // Fungsi menampilkan Text
-  display.setCursor(0, 10);
-  display.println("Servo"); 
-
-  // Fungsi menampilkan Text
-  display.setCursor(0, 20);
-  display.println(pos);
-  
-  display.display();              
-  delay(15);
-
+  lcd.clear(); 
 
 
 }
