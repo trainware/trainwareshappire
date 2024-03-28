@@ -23,7 +23,4 @@ void loop() {
 
   // fungsi menampilkan GUI
   gui_control();
-  
-
-  
 }

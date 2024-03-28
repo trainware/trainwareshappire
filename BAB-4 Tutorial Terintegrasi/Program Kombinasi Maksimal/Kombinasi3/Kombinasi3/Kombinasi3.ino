@@ -36,6 +36,9 @@ bool t_LED_4=LOW;
 
 MFRC522 rfid(SS_PIN, RST_PIN);
 
+// Deklarasi variable untuk menyimpan UID yang terbaca
+String strbuff_uid="";
+
 /*=================================================== RGB ===========*/
 // Mendefinisikan pin RGB pada ESP32
 #define pin_RGB_R   15
@@ -95,9 +98,6 @@ Servo myservo;
 
 // Inisialisasi Variable pos (posisi servo)
 int pos = 0; 
-
-String strbuff_uid="";
-String savelast_uid="";
 
 void setup() {
   
@@ -213,42 +213,47 @@ void loop() {
   delay(15);
 
   /*=================================================== RELAY ===========*/
+  // Jika voltage Potensio Kurang Dari 1, maka
   if(voltage < 1){
     digitalWrite(relayPin, LOW);
     Serial.println("low");
   }
+  // Jika voltage Potensio Antara 1 s/d 2, maka
   else if (voltage >= 1 && voltage <=2){
     digitalWrite(relayPin, HIGH);
     Serial.println("high");
   }
+  // Jika voltage Potensio Lebih Dari 1, maka
   else if (voltage > 2){
     digitalWrite(relayPin, LOW);
     Serial.println("low");
   }
 
   /*=================================================== RFID ===========*/
-  if (rfid.PICC_IsNewCardPresent()) { // new tag is available
-    if (rfid.PICC_ReadCardSerial()) { // NUID has been readed
+  if (rfid.PICC_IsNewCardPresent()) { // Cek apakah ada Tag Baru ?
+    if (rfid.PICC_ReadCardSerial()) { 
       MFRC522::PICC_Type piccType = rfid.PICC_GetType(rfid.uid.sak);
       Serial.print("RFID/NFC Tag Type: ");
       Serial.println(rfid.PICC_GetTypeName(piccType));
       strbuff_uid="";
 
-      // print UID in Serial Monitor in the hex format
+      // print UID di Serial Monitor dalam format HEX
       Serial.print("UID:");
       for (int i = 0; i < rfid.uid.size; i++) {
-        // Serial.print(rfid.uid.uidByte[i] < 0x10 ? " 0" : " ");
-        // Serial.print(rfid.uid.uidByte[i], HEX);
+        Serial.print(rfid.uid.uidByte[i] < 0x10 ? " 0" : " ");
+        Serial.print(rfid.uid.uidByte[i], HEX);
+        // Simpan UID yang terbaca ke variabel strbuff_uid
         strbuff_uid+=rfid.uid.uidByte[i] < 0x10 ? " 0" : " ";
         strbuff_uid+=String(rfid.uid.uidByte[i], HEX);
       }
       Serial.println();
+      // Kelola string "strbuff_uid" untuk ditampilkan ke LCD
       strbuff_uid.toUpperCase();
       strbuff_uid.remove(0,1);
       Serial.print(strbuff_uid);
 
-      rfid.PICC_HaltA(); // halt PICC
-      rfid.PCD_StopCrypto1(); // stop encryption on PCD
+      rfid.PICC_HaltA(); 
+      rfid.PCD_StopCrypto1();
     }
   }
 
@@ -268,6 +273,7 @@ void loop() {
   lcd.print("BTN:");
 
   /*=================================================== RGB ===========*/
+  // Mengisi nilai PWM RGB dengan nilai dari Potensiometer
   RGB_val = floatMap(analogValue, 0, 4095, 0, 255);
   RGB_pwmR = RGB_val;
   RGB_pwmG = RGB_val;
@@ -275,18 +281,19 @@ void loop() {
   ledcWrite(ledChannel1, RGB_pwmR); 
   ledcWrite(ledChannel2, RGB_pwmG); 
   ledcWrite(ledChannel3, RGB_pwmB);
-
-  
   
   /*=================================================== BUTTON ===========*/
+  // Fungsi untuk Toggle Logic LED ketika Button ditekan
   if(digitalRead(BUTTON_PIN1))t_LED_1=!t_LED_1;
-  digitalWrite(pin_LED_1, t_LED_1);
   if(digitalRead(BUTTON_PIN2))t_LED_2=!t_LED_2;
-  digitalWrite(pin_LED_2, t_LED_2);
   if(digitalRead(BUTTON_PIN3))t_LED_3=!t_LED_3;
-  digitalWrite(pin_LED_3, t_LED_3);
   if(digitalRead(BUTTON_PIN4))t_LED_4=!t_LED_4;
+  // Fungsi ON/OFF LED 1 - LED 4
+  digitalWrite(pin_LED_1, t_LED_1);
+  digitalWrite(pin_LED_2, t_LED_2);
+  digitalWrite(pin_LED_3, t_LED_3);
   digitalWrite(pin_LED_4, t_LED_4);
+  
   // Mengatur posisi text pada X = 12 ; Y = 1.
   lcd.setCursor(12,1);
   // Text yang ditampilkan
@@ -307,6 +314,7 @@ void loop() {
   // Text yang ditampilkan
   lcd.print(digitalRead(BUTTON_PIN4));
 
+  // Jeda 50 Detik
   delay(50);
   
   lcd.clear(); 
