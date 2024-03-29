@@ -14,10 +14,10 @@ void setup() {
   Serial.begin(115200);
 
   // Meng set Pin Semua BUTTON menjadi Mode INPUT
-  pinMode(pin_Bt_1, INPUT);
-  pinMode(pin_Bt_2, INPUT);
-  pinMode(pin_Bt_3, INPUT);
-  pinMode(pin_Bt_4, INPUT);
+  pinMode(pin_Bt_1, INPUT_PULLDOWN);
+  pinMode(pin_Bt_2, INPUT_PULLDOWN);
+  pinMode(pin_Bt_3, INPUT_PULLDOWN);
+  pinMode(pin_Bt_4, INPUT_PULLDOWN);
 }
 
 void loop() {

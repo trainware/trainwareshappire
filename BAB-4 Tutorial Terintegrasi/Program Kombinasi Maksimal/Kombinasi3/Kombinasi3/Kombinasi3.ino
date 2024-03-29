@@ -83,10 +83,41 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 /*=================================================== ADD BUTTON ===========*/
 // Mendefinisikan pin Button pada ESP32
-#define BUTTON_PIN1 12  // GIOP13 pin connected to button
-#define BUTTON_PIN2 13  // GIOP13 pin connected to button
-#define BUTTON_PIN3 35  // GIOP13 pin connected to button
-#define BUTTON_PIN4 34  // GIOP13 pin connected to button
+#define pin_Bt_1 12  // GIOP13 pin connected to button
+#define pin_Bt_2 13  // GIOP13 pin connected to button
+#define pin_Bt_3 35  // GIOP13 pin connected to button
+#define pin_Bt_4 34  // GIOP13 pin connected to button
+
+unsigned long last_time=0;
+
+// array buffer state dari suatu button
+unsigned char btn_trig[6]={0xFF,0xFF,0xFF,0xFF,0xFF};
+// btn_trig[1] -> untuk Button 1
+// btn_trig[2] -> untuk Button 2
+// btn_trig[3] -> untuk Button 3
+// btn_trig[4] -> untuk Button 4
+
+#define pressed     0x01 // Register ketika ditekan
+
+// Fungsi untuk scanning Button
+// Ketika ditekan maka Register akan geser ke kiri dan di OR kan dengan 0
+// Ketika ditekan maka Register akan geser ke kiri dan di OR kan dengan 1
+void bt_scan(byte Button_pin,int btn){
+  if(digitalRead(Button_pin)==HIGH){
+    btn_trig[btn]=(btn_trig[btn]<<3|0);
+  }
+  else if(digitalRead(Button_pin)==LOW){
+    btn_trig[btn]=(btn_trig[btn]<<1)|1;
+  }
+}
+
+// Scan tiap Button dengan fungsi bt_scan
+void bt_allscan(){
+  bt_scan(pin_Bt_3,3);
+  bt_scan(pin_Bt_4,4);
+  bt_scan(pin_Bt_1,1);
+  bt_scan(pin_Bt_2,2);
+}
 
 /*=================================================== SERVO ===========*/
 #define ServoPin  26
@@ -159,11 +190,11 @@ void setup() {
   display.setTextColor(WHITE);
 
   /*=================================================== ADD BUTTON ===========*/
-  // initialize the pushbutton pin as an pull-up input
-  pinMode(BUTTON_PIN1, INPUT_PULLDOWN);
-  pinMode(BUTTON_PIN2, INPUT_PULLDOWN);
-  pinMode(BUTTON_PIN3, INPUT_PULLDOWN);
-  pinMode(BUTTON_PIN4, INPUT_PULLDOWN);
+  // initialize the pushbutton pin as an pull-up input pull down
+  pinMode(pin_Bt_1, INPUT_PULLDOWN);
+  pinMode(pin_Bt_2, INPUT_PULLDOWN);
+  pinMode(pin_Bt_3, INPUT_PULLDOWN);
+  pinMode(pin_Bt_4, INPUT_PULLDOWN);
 
   /*=================================================== SERVO ===========*/
   // Inisialisasi start Servo 
@@ -188,7 +219,8 @@ void loop() {
 
   // Mencetak Nilai Hasil fungsi MAP / Re-Scale (0-3,3V)
   Serial.print(", Voltage: ");
-  Serial.println(voltage);
+  Serial.print(voltage);
+  Serial.print("   | ");
 
   /*=================================================== SERVO ===========*/
   int pos = floatMap(analogValue, 0, 4095, 0, 180);
@@ -210,7 +242,6 @@ void loop() {
   display.println(String(percentage) + "%");
   
   display.display();              
-  delay(15);
 
   /*=================================================== RELAY ===========*/
   // Jika voltage Potensio Kurang Dari 1, maka
@@ -258,6 +289,11 @@ void loop() {
   }
 
   /*=================================================== LCD ===========*/
+  if(millis()-last_time>=250){
+    lcd.clear();
+    last_time=millis();
+  }
+  
   // Mengatur posisi text pada X = 0 ; Y = 0.
   lcd.setCursor(0, 1);
   // Text yang ditampilkan
@@ -266,7 +302,7 @@ void loop() {
   lcd.setCursor(0, 0);
   // Text yang ditampilkan
   lcd.print("UID RFID:");
-   
+  
   // Mengatur posisi text pada X = 0 ; Y = 1.
   lcd.setCursor(12,0);
   // Text yang ditampilkan
@@ -283,11 +319,16 @@ void loop() {
   ledcWrite(ledChannel3, RGB_pwmB);
   
   /*=================================================== BUTTON ===========*/
+  
+  // scan semua Button
+  bt_allscan();
+  delay(5);
+
   // Fungsi untuk Toggle Logic LED ketika Button ditekan
-  if(digitalRead(BUTTON_PIN1))t_LED_1=!t_LED_1;
-  if(digitalRead(BUTTON_PIN2))t_LED_2=!t_LED_2;
-  if(digitalRead(BUTTON_PIN3))t_LED_3=!t_LED_3;
-  if(digitalRead(BUTTON_PIN4))t_LED_4=!t_LED_4;
+  if(btn_trig[1]==pressed)t_LED_1=!t_LED_1;
+  if(btn_trig[2]==pressed)t_LED_2=!t_LED_2;
+  if(btn_trig[3]==pressed)t_LED_3=!t_LED_3;
+  if(btn_trig[4]==pressed)t_LED_4=!t_LED_4;
   // Fungsi ON/OFF LED 1 - LED 4
   digitalWrite(pin_LED_1, t_LED_1);
   digitalWrite(pin_LED_2, t_LED_2);
@@ -297,27 +338,21 @@ void loop() {
   // Mengatur posisi text pada X = 12 ; Y = 1.
   lcd.setCursor(12,1);
   // Text yang ditampilkan
-  lcd.print(digitalRead(BUTTON_PIN1));
+  lcd.print(digitalRead(pin_Bt_1));
 
   // Mengatur posisi text pada X = 13 ; Y = 1.
   lcd.setCursor(13,1);
   // Text yang ditampilkan
-  lcd.print(digitalRead(BUTTON_PIN2));
+  lcd.print(digitalRead(pin_Bt_2));
 
   // Mengatur posisi text pada X = 14 ; Y = 1.
   lcd.setCursor(14,1);
   // Text yang ditampilkan
-  lcd.print(digitalRead(BUTTON_PIN3));
+  lcd.print(digitalRead(pin_Bt_3));
 
   // Mengatur posisi text pada X = 15 ; Y = 1.
   lcd.setCursor(15,1);
   // Text yang ditampilkan
-  lcd.print(digitalRead(BUTTON_PIN4));
-
-  // Jeda 50 Detik
-  delay(50);
-  
-  lcd.clear(); 
-
-
+  lcd.print(digitalRead(pin_Bt_4));
+ 
 }
