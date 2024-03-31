@@ -33,6 +33,10 @@ void gui_changePage(){
       lcd.clear();
       lcd_putsxy(1,0, "JP2-Ultrasonic");
       lcd_putsxy(1,1, "JP2-LED");
+      digitalWrite(pin_Led_1, LOW);
+      digitalWrite(pin_Led_2, LOW);
+      digitalWrite(pin_Led_3, LOW);
+      digitalWrite(pin_Led_4, LOW);
       break;
     case 12:
       lcd.clear();

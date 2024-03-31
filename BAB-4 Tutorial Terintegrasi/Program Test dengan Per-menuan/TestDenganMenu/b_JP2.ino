@@ -68,10 +68,8 @@ void cont_led_running(int delays){
     cont_led(pin_Led_1, LOW);
     cont_led(pin_Led_2, LOW);
     cont_led(pin_Led_3, LOW);
-    cont_led(pin_Led_4, HIGH);  
-  }
-  if(time_now-time_last>=delays*5){
-    time_last=time_now;
+    cont_led(pin_Led_4, HIGH);
+    time_last=time_now;  
   }
 }
 
