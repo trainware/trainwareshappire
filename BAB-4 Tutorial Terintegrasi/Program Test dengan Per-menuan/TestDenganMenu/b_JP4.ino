@@ -16,8 +16,8 @@ float read_pot(){
   return analogRead(pin_Pot);
 }
 
-float read_potpercent(){
-  return floatMap(analogRead(pin_Pot), 0, 4095, 0, 3.3);
+int read_potpercent(){
+  return map(analogRead(pin_Pot), 0, 4095, 0, 100);
 }
 
 /*=================================================== FLAME ===========*/

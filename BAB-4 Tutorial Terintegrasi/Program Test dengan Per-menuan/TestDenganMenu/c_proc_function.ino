@@ -83,8 +83,10 @@ void gui_runPage(int page){
     break;
 
     case 25:
-      lcd_putsxy(5,1, String(read_pot(),0));
-      lcd_putsxy(11,1, String(read_potpercent(),1) + " %");
+      lcd_putsxy(4,1, "    ");
+      lcd_putsxy(4,1, String(read_pot(),0));
+      lcd_putsxy(11,1, "   ");
+      lcd_putsxy(11,1, String(read_potpercent()));
     break;
 
     case 16:

@@ -100,8 +100,9 @@ void gui_changePage(){
     case 25:
       lcd.clear();
       lcd_putsxy(0,0, "Potensio Read");
-      lcd_putsxy(1,1, "ADC:");
-      lcd_putsxy(10,1, "| ");
+      lcd_putsxy(0,1, "ADC:");
+      lcd_putsxy(9,1, "| ");
+      lcd_putsxy(15,1, "% ");
       break;
     
     case 6:
