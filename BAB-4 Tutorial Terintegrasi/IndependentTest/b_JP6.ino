@@ -34,7 +34,7 @@ void bt_test(){
 
 void bt_scan(byte Button_pin,int btn){
   if(digitalRead(Button_pin)==HIGH){
-    btn_trig[btn]=(btn_trig[btn]<<1|0);
+    btn_trig[btn]=(btn_trig[btn]<<2|0);
   }
   else if(digitalRead(Button_pin)==LOW){
     btn_trig[btn]=(btn_trig[btn]<<1)|1;

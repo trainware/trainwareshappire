@@ -106,13 +106,13 @@ void gui_runPage(int page){
     break;
 
     case 17:
-      lcd_putsxy(3,1, String(read_D0gas()));
-      lcd_putsxy(9,1, String(read_A0gas()));
+      // lcd_putsxy(3,1, String(read_D0gas()));
+      // lcd_putsxy(9,1, String(read_A0gas()));
     break;
 
     case 27:
-      lcd_putsxy(3,1, String(read_D0rain()));
-      lcd_putsxy(9,1, String(read_A0rain()));
+      // lcd_putsxy(3,1, String(read_D0rain()));
+      // lcd_putsxy(9,1, String(read_A0rain()));
     break;
 
     case 18:
