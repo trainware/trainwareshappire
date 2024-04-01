@@ -77,11 +77,11 @@ void gui_changePage(){
     case 14:
       lcd.clear();
       lcd_putsxy(0, 0, "KEYPAD Test");
-      lcd_putsxy(0, 1, "Insert:");
+      lcd_putsxy(0, 1, "Insert :");
       break;
     case 24:
       lcd.clear();
-      lcd_putsxy(0,0, "Soil Sense Value");
+      lcd_putsxy(0,0, "SOIL SENSOR");
       lcd_putsxy(0,1, "D0:");
       lcd_putsxy(8,1, "A0:");
       init_soil();
@@ -89,12 +89,12 @@ void gui_changePage(){
 
     case 5:
       lcd.clear();
-      lcd_putsxy(1,0, "JP4-FLAME");
+      lcd_putsxy(1,0, "JP4-FLAME SENSE");
       lcd_putsxy(1,1, "JP4-Potensiometer");
       break;
     case 15:
       lcd.clear();
-      lcd_putsxy(0, 0, "Flame Read");
+      lcd_putsxy(0, 0, "FLAME SENSOR");
       init_flame();
       break;
     case 25:
@@ -108,7 +108,7 @@ void gui_changePage(){
     case 6:
       lcd.clear();
       lcd_putsxy(1,0, "JP5-RTC");
-      lcd_putsxy(1,1, "JP5-Oled");
+      lcd_putsxy(1,1, "JP5-OLED");
       break;
     case 16:
       lcd.clear();
@@ -117,7 +117,7 @@ void gui_changePage(){
       break;
     case 26:
       lcd.clear();
-      lcd_putsxy(0,0, "Oled Test");
+      lcd_putsxy(0,0, "OLED Test");
       lcd_putsxy(0,1, "Play Gambar");
       init_oled();
       break;

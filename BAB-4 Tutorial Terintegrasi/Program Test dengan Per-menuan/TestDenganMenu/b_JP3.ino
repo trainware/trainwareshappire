@@ -18,8 +18,8 @@ void read_keypad(){
   // maka Akan ditampilkan tombol yang ditekan melalui Serial Monitor
   if (key) {
     Serial.println(key);
-    lcd_putsxy(8,1, "       ");
-    lcd_putsxy(8,1, String(key));
+    lcd_putsxy(9,1, "      ");
+    lcd_putsxy(9,1, String(key));
   }
 }
 
