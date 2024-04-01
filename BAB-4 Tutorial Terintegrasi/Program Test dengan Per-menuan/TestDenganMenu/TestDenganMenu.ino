@@ -12,8 +12,12 @@ void setup() {
   
   /*=================================================== RTC ===========*/
   // Pilih Salah satu
-  init_rtc(); // gunakan ini jika tidak mengkompile lagi setelahnya
-  //set_ds1307_TimeCompile(); // gunakan ini untuk men set waktu pada RTC sesuai waktu kompile (Sekarang)
+  
+  // gunakan ini jika tidak mengkompile lagi setelahnya
+  init_rtc(); 
+  
+  // gunakan ini untuk men set waktu pada RTC sesuai waktu kompile (Sekarang)
+  //set_ds1307_TimeCompile();
 
   /*=================================================== BUTTON ===========*/
   init_button();

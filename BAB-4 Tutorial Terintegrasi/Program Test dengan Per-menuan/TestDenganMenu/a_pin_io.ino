@@ -146,3 +146,7 @@ byte pin_Column[COL_NUM]    = {23, 19, 18, 5};  // GPIO23, GPIO19, GPIO18, GPIO5
 //#define DHTTYPE DHT21   // DHT 21 (AM2301)\
 
 unsigned long time_last;
+
+
+
+

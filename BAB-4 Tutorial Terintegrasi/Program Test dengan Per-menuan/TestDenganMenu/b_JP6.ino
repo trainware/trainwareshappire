@@ -42,8 +42,8 @@ void bt_scan(byte Button_pin,int btn){
 }
 
 void bt_allscan(){
-  bt_scan(pin_BtDown,1);
-  bt_scan(pin_BtUp,2);
+  bt_scan(pin_BtUp,1);
+  bt_scan(pin_BtDown,2);
   bt_scan(pin_BtBack,3);
   bt_scan(pin_BtEnter,4);
 }

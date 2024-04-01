@@ -40,7 +40,7 @@ void gui_changePage(){
       break;
     case 12:
       lcd.clear();
-      lcd_putsxy(0, 0, "US Read");
+      lcd_putsxy(0, 0, "US HC-SR04 Read");
       lcd_putsxy(0, 1, "Jarak:");
       init_us();
       break;
@@ -168,10 +168,16 @@ void gui_changePage(){
       break;
     case 19:
       lcd.clear();
-      lcd_putsxy(0, 0, "DHT Test");
+      lcd_putsxy(0, 0, "DHT");
+      lcd_putsxy(0, 1, String(DHTTYPE));
       lcd_putsxy(4, 0, "Hum:");
       lcd_putsxy(4, 1, "T:");
       init_dht();
+      break;
+    case 29:
+      lcd.clear();
+      lcd_putsxy(0, 0, "Trainware");
+      lcd_putsxy(0, 1, "Shappire");
       break;
   }
 }

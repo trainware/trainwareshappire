@@ -21,7 +21,7 @@ void gui_control(){
     break;
 
     case 1: case 2: case 3: case 4: case 5: case 6: case 7: case 8: case 9:
-      if(btn_trig[1]==pressed){
+      if(btn_trig[2]==pressed){
         gui_menuSelect++; gui_cur_erase();
         if(gui_menuSelect>1){
           gui_menuSelect=0;
@@ -34,7 +34,7 @@ void gui_control(){
         }
         else{gui_cursorpos(gui_menuSelect);}
       }
-      else if(btn_trig[2]==pressed){
+      else if(btn_trig[1]==pressed){
         gui_menuSelect--; gui_cur_erase();
         if(gui_menuSelect<0){
           gui_menuSelect=1;
@@ -314,6 +314,15 @@ void gui_control(){
         gui_cursorpos(gui_menuSelect);
       }     
     gui_runPage(gui_pageNow);
+    break;
+
+    case 29:
+      if(btn_trig[3]==pressed){
+        gui_menuSelect=0;
+        gui_pageNow-=20;
+        gui_changePage(); 
+        gui_cursorpos(gui_menuSelect);
+      }     
     break;
 
   }
