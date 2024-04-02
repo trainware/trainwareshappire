@@ -3,8 +3,8 @@
 
 // Isi Data berikut berdasarkan yang dikirimkan ke email anda
 // anda juga dapat melihatnya di Web dashboard blynk anda
-#define BLYNK_TEMPLATE_ID   "TMPL6mTASbPAb"
-#define BLYNK_TEMPLATE_NAME "TrainWare"
+#define BLYNK_TEMPLATE_ID   "TMPL6vP0yS7Ei"
+#define BLYNK_TEMPLATE_NAME "Trainware"
 #define BLYNK_AUTH_TOKEN    "0jqKdmxNZhm241wUcn37Rt9yC_fmUZDl"
 
 // Memasukkkan library yang diperlukan
@@ -30,20 +30,41 @@ float floatMap(float x, float in_min, float in_max, float out_min, float out_max
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
+#include "LiquidCrystal_I2C.h"
+
+// atur jumlah Baris-Kolom LCD yang digunakan 
+int lcdColumns = 16;
+int lcdRows = 2;
+
+// address I2C LCD : 0x27.
+LiquidCrystal_I2C lcd(0x27, lcdColumns, lcdRows); 
+
 // Iniasalisasi variable untuk Value LED 3 dan LED 4
-int led_3_value=0;
-int led_4_value=0;
+int LEDToggle_Val=0;
+int Slider_Val=0;
+
+// Membuat custom char untuk LCD I2C
+byte Slider[] = {
+  B00100,
+  B01110,
+  B01110,
+  B01110,
+  B11111,
+  B00000,
+  B00100,
+  B00000
+};
 
 // Fungsi untuk membaca Variable V1 dari Blynk ke ESP32
-BLYNK_WRITE(V1)
+BLYNK_WRITE(V0)
 {
-  led_3_value = param.asInt(); //
+  LEDToggle_Val = param.asInt(); //
 }
 
 // Fungsi untuk membaca Variable V5 dari Blynk ke ESP32
-BLYNK_WRITE(V5)
+BLYNK_WRITE(V1)
 {
-  led_4_value = param.asInt(); //
+  Slider_Val = param.asInt(); //
 }
 
 // Inisialisasi variable Timer dari Blynk
@@ -69,11 +90,11 @@ void myTimerEvent()
   
   // Mencetak nilai Dimmer LED 4
   Serial.print(", Led 4 val : ");
-  Serial.println(led_4_value);
+  Serial.println(Slider_Val);
 
   // Fungsi untuk mengirim nilai dari ESP32 ke Blynk 
   // Batas anda mengirim data ke Blynk adalah 10 data per Detik.
-  Blynk.virtualWrite(V4, percentage);
+  Blynk.virtualWrite(V2, percentage);
 }
 
 void setup()
@@ -89,18 +110,29 @@ void setup()
   // Meng set Pin LED menjadi Mode OUTPUT
   pinMode(pin_Led_3, OUTPUT);
   pinMode(pin_Led_4, OUTPUT);
+
+  // Inisialisasi LCD
+  lcd.init();
+  // Fungsi menyalakan backlight LCD
+  lcd.backlight();
+
+  lcd.createChar(0, Slider);
+
 }
 
 void loop()
 {
 
+  lcd.setCursor(0, 1);
+  lcd.write(byte(0));
+
   // Fungsi Control LED 3 untuk Toggling
-  // nilai led_3_value adalah 0 & 1
-  digitalWrite(pin_Led_3, led_3_value);
+  // nilai LEDToggle_Val adalah 0 & 1
+  digitalWrite(pin_Led_3, LEDToggle_Val);
   
   // Fungsi Control LED 4 untuk Dimming 
-  // nilai led_4_value adalah 0 - 255
-  analogWrite(pin_Led_4, led_4_value);
+  // nilai Slider_Val adalah 0 - 255
+  analogWrite(pin_Led_4, Slider_Val);
   delay(50);
 
   Blynk.run(); // Menjalankan Blynk
