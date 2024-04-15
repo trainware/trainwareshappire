@@ -3,9 +3,9 @@
 
 // Isi Data berikut berdasarkan yang dikirimkan ke email anda
 // anda juga dapat melihatnya di Web dashboard blynk anda
-#define BLYNK_TEMPLATE_ID   "TMPL6vP0yS7Ei"
-#define BLYNK_TEMPLATE_NAME "Trainware"
-#define BLYNK_AUTH_TOKEN    "0jqKdmxNZhm241wUcn37Rt9yC_fmUZDl"
+#define BLYNK_TEMPLATE_ID "TMPL6A44EDoee"
+#define BLYNK_TEMPLATE_NAME "TrainWare Shappire"
+#define BLYNK_AUTH_TOKEN "XHCohuVmttFkKmZ8vNI3J4BHfu2jvjt3"
 
 // Memasukkkan library yang diperlukan
 #include <WiFi.h>
@@ -36,6 +36,9 @@ float floatMap(float x, float in_min, float in_max, float out_min, float out_max
 int lcdColumns = 16;
 int lcdRows = 2;
 
+int jumlahKolomLCD=0;
+int i=0;
+
 // address I2C LCD : 0x27.
 LiquidCrystal_I2C lcd(0x27, lcdColumns, lcdRows); 
 
@@ -45,23 +48,23 @@ int Slider_Val=0;
 
 // Membuat custom char untuk LCD I2C
 byte Slider[] = {
-  B00100,
-  B01110,
-  B01110,
-  B01110,
+  B00011,
+  B00111,
+  B01111,
   B11111,
-  B00000,
-  B00100,
-  B00000
+  B11111,
+  B11110,
+  B11100,
+  B11000
 };
 
-// Fungsi untuk membaca Variable V1 dari Blynk ke ESP32
+// Fungsi untuk membaca Variable V0 dari Blynk ke ESP32
 BLYNK_WRITE(V0)
 {
   LEDToggle_Val = param.asInt(); //
 }
 
-// Fungsi untuk membaca Variable V5 dari Blynk ke ESP32
+// Fungsi untuk membaca Variable V1 dari Blynk ke ESP32
 BLYNK_WRITE(V1)
 {
   Slider_Val = param.asInt(); //
@@ -91,6 +94,9 @@ void myTimerEvent()
   // Mencetak nilai Dimmer LED 4
   Serial.print(", Led 4 val : ");
   Serial.println(Slider_Val);
+
+  jumlahKolomLCD = (Slider_Val*15)/100;
+  lcd.clear();
 
   // Fungsi untuk mengirim nilai dari ESP32 ke Blynk 
   // Batas anda mengirim data ke Blynk adalah 10 data per Detik.
@@ -122,9 +128,13 @@ void setup()
 
 void loop()
 {
+  lcd.setCursor(0,0);
+  lcd.print("Slider-Val Blynk");
 
-  lcd.setCursor(0, 1);
-  lcd.write(byte(0));
+  for(i=0; i<=jumlahKolomLCD ;i++ ){
+    lcd.setCursor(i, 1);
+    lcd.write(byte(0));
+  }
 
   // Fungsi Control LED 3 untuk Toggling
   // nilai LEDToggle_Val adalah 0 & 1
