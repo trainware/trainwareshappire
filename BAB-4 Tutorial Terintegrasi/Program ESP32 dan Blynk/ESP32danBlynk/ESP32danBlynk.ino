@@ -1,11 +1,36 @@
+/* ==================
+
+  TrainWare
+  ESP32 Blynk untuk Kontrol LED 3 dan LED 4
+
+  ESP32 terhubung ke Wifi yang memiliki Akses Internet, yang kemudian
+  akan terhubung dengan Blynk.
+
+  Dashboard Blynk dapat dibuat di Web browser (PC) dan Mobile App Blynk (HP)
+
+  INPUT : 
+  - JP4   Pembacaan ADC Potensiometer 
+
+  DISPLAY :
+  - JP5   LCD I2C
+
+  OUTPUT : 
+  - LED 3
+  - LED 4
+
+  Library yang harus diinstall oleh anda:
+  Blynk.h b Volodymyr
+
+================== */
+
 // Untuk kebutuhan Library Blynk
 #define BLYNK_PRINT Serial
 
 // Isi Data berikut berdasarkan yang dikirimkan ke email anda
 // anda juga dapat melihatnya di Web dashboard blynk anda
-#define BLYNK_TEMPLATE_ID "TMPL6A44EDoee"
+#define BLYNK_TEMPLATE_ID "Isi dengan Template ID anda"
 #define BLYNK_TEMPLATE_NAME "TrainWare Shappire"
-#define BLYNK_AUTH_TOKEN "XHCohuVmttFkKmZ8vNI3J4BHfu2jvjt3"
+#define BLYNK_AUTH_TOKEN "Isi dengan Token anda"
 
 // Memasukkkan library yang diperlukan
 #include <WiFi.h>
@@ -36,6 +61,7 @@ float floatMap(float x, float in_min, float in_max, float out_min, float out_max
 int lcdColumns = 16;
 int lcdRows = 2;
 
+// Tampilan Slider pada LCD
 int jumlahKolomLCD=0;
 int i=0;
 
