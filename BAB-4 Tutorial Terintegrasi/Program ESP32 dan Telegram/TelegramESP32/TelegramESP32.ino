@@ -38,7 +38,7 @@ const char* ssid = "NKRI1";
 const char* password = "indonesia1968";
 
 // Isi dengan BOT Token yang sudah anda dapatkan dari BotFather
-#define BOTtoken "6476375965:AAGYWKeaD84ao15fDhLtuaQPXpCi_ZABV_A" 
+#define BOTtoken "6990312264:AAH3c8Wcn5td0MEzv3m2WcogVizZscRk_sc" 
 
 // Gunakan @myidbot untuk mengetahui ID Telegram yang harus mendapatkan datanya
 // Bisa berupa Individu atau Group
