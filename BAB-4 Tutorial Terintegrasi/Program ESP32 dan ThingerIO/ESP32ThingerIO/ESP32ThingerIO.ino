@@ -26,21 +26,21 @@
 
 #include <ThingerESP32.h>
 
-#define USERNAME            "fendiard"
-#define DEVICE_ID           "esp32_TrainWare"
-#define DEVICE_CREDENTIAL   "4ZNfQacl854idM0m"
+#define USERNAME            "trainware"         // Isi dengan username Akun Thinger IO Anda
+#define DEVICE_ID           "TrainwareShappire" // Isi dengan Device ID yang telah anda isikan saat Membuat Device
+#define DEVICE_CREDENTIAL   "zIERf95OY&!K-X9E"  // Isi dengan Device Credential yang telah anda generate random saat Membuat Device
 
-#define SSID            "NKRI1"
-#define SSID_PASSWORD   "indonesia1968"
+#define SSID                "NKRI1"
+#define SSID_PASSWORD       "indonesia1968"
 
 ThingerESP32 thing(USERNAME, DEVICE_ID, DEVICE_CREDENTIAL);
 
-/*=================================================== LED ===========*/
+/*=================================================== LED         ===========*/
 
 // Mendefinisikan pin LED-3 dan LED-4 pada ESP32
 #define pin_Led_4   2
 
-/*=================================================== SERVO ===========*/
+/*=================================================== SERVO       ===========*/
 
 // Inisialisasi Library Servo.h
 #include <Servo.h>
@@ -59,12 +59,12 @@ int pos = 0;
 int aux_position_servo=0;
 int new_position_servo=0;
 
-/*=================================================== FLAME SENSE ===========*/
+/*=================================================== FLAME SENSE   ===========*/
 
 // Mendefinisikan pin Flame Sensor pada ESP32
 #define pin_Flame  39
 
-/*=================================================== DHT ===========*/
+/*=================================================== DHT           ===========*/
 
 // inisialisasi library DHT Sensor
 #include "DHT.h"
@@ -74,9 +74,9 @@ int new_position_servo=0;
 
 // Anda dapat menggunakan Library ini untuk DHT11, DHT22, dan DHT21
 // Uncomment salah 1 dari 3, tergantung dari sensor yang digunakan
-#define DHTTYPE DHT11   // DHT 11
-// #define DHTTYPE DHT22   // DHT 22  (AM2302), AM2321
-//#define DHTTYPE DHT21   // DHT 21 (AM2301)
+#define DHTTYPE DHT11       // DHT 11
+// #define DHTTYPE DHT22    // DHT 22   (AM2302), AM2321
+// #define DHTTYPE DHT21    // DHT 21   (AM2301)
 
 // Aliasing Library DHT -> dht
 DHT dht(pin_DHT, DHTTYPE);

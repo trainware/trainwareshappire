@@ -29,7 +29,7 @@
 // Isi Data berikut berdasarkan yang dikirimkan ke email anda
 // anda juga dapat melihatnya di Web dashboard blynk anda
 #define BLYNK_TEMPLATE_ID "Isi dengan Template ID anda"
-#define BLYNK_TEMPLATE_NAME "TrainWare Shappire"
+#define BLYNK_TEMPLATE_NAME "Isi dengan nama Template yang telah anda buat"
 #define BLYNK_AUTH_TOKEN "Isi dengan Token anda"
 
 // Memasukkkan library yang diperlukan
