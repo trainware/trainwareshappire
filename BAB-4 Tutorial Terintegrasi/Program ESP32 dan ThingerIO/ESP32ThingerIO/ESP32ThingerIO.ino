@@ -19,6 +19,8 @@
 
   Library yang harus diinstall oleh anda:
   thinger.io by Alvaro Luis Bustamante V2.27.0
+  dht sensor library by adafruit
+  servo.h by Jaroslav Paral V1.0.3
 
 ================== */
 
@@ -28,17 +30,20 @@
 
 #define USERNAME            "trainware"         // Isi dengan username Akun Thinger IO Anda
 #define DEVICE_ID           "TrainwareShappire" // Isi dengan Device ID yang telah anda isikan saat Membuat Device
-#define DEVICE_CREDENTIAL   "zIERf95OY&!K-X9E"  // Isi dengan Device Credential yang telah anda generate random saat Membuat Device
+#define DEVICE_CREDENTIAL   "STL1iaA_HlvIQ$Ml"  // Isi dengan Device Credential yang telah anda generate random saat Membuat Device
 
-#define SSID                "NKRI1"
+#define SSID                "telkom"
 #define SSID_PASSWORD       "indonesia1968"
 
 ThingerESP32 thing(USERNAME, DEVICE_ID, DEVICE_CREDENTIAL);
 
 /*=================================================== LED         ===========*/
-
 // Mendefinisikan pin LED-3 dan LED-4 pada ESP32
 #define pin_Led_4   2
+
+/*=================================================== RELAY       ===========*/
+// mendefinisikan pin Relay pada ESP32
+#define pin_Relay  25
 
 /*=================================================== SERVO       ===========*/
 
@@ -58,6 +63,11 @@ int pos = 0;
 
 int aux_position_servo=0;
 int new_position_servo=0;
+
+/*=================================================== POTENSIOMETER   ===========*/
+
+// Mendefinisikan pin Potensiometer pada ESP32
+#define pin_Pot   36
 
 /*=================================================== FLAME SENSE   ===========*/
 
@@ -105,6 +115,9 @@ void setup() {
   // Inisialisasi Set pin LED 4 pada ESP32 sebagai OUTPUT
   pinMode(pin_Led_4, OUTPUT);
 
+  // Meng Set pin Relay pada ESP32 sebagai OUTPUT
+  pinMode(pin_Relay, OUTPUT);
+
   // Inisialisasi start Servo 
   myservo.attach(pin_Servo);
 
@@ -122,7 +135,8 @@ void setup() {
   thing.add_wifi(SSID, SSID_PASSWORD);
 
   // Fungsi untuk Membaca Data dari Thinger IO
-  thing["Ctrl_LED_4"] << digitalPin(2);
+  thing["Ctrl_Relay"] << digitalPin(pin_Relay);
+  thing["Ctrl_LED_4"] << digitalPin(pin_Led_4);
   thing["Ctrl_Servo"] << [](pson &in){
     if(in.is_empty()){
       in = aux_position_servo;
@@ -135,8 +149,9 @@ void setup() {
   };  
 
   // Fungsi untuk Mengirimkan Data ke Thinger IO
-  thing["Read_Flame"] >> outputValue(digitalRead(pin_Flame));
-  thing["DHT"] >> [](pson& out){
+  thing["Read_Potensio"] >> outputValue(analogRead(pin_Pot));
+  thing["Read_Flame"] >> outputValue(!digitalRead(pin_Flame));
+  thing["Read_DHT"] >> [](pson& out){
     out["kelembaban"] = dht.readHumidity();
     out["suhu_celcius"] = dht.readTemperature();  
   };
