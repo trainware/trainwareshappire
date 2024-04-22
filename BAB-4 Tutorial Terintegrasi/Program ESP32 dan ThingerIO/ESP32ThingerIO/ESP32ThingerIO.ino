@@ -195,8 +195,8 @@ void setup() {
     lcd.setCursor(13, 1);
     lcd.print("  %");
     lcd.setCursor(13, 1);
-    lcd.print(map(analogRead(pin_A0Gas),0,3000,0,100));
-    out = map(analogRead(pin_A0Gas),0,3000,0,100);
+    lcd.print(map(analogRead(pin_A0Gas),0,4095,0,100));
+    out = map(analogRead(pin_A0Gas),0,4095,0,100);
   };
   thing["Read_Flame"] >> outputValue(!digitalRead(pin_Flame));
   thing["Read_DHT"] >> [](pson& out){
