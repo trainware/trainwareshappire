@@ -46,6 +46,10 @@
 const char * ssid = "NKRI1"; // Nama network (wifi/router/tether) anda
 const char * pwd  = "indonesia1968"; // Password network (wifi/router/tether) anda
 
+// IP Address dan Port PC Anda
+const char * udpAddress = "192.168.100.121"; // Ip Address PC
+const int udpPort = 8080;                   // UDP Port PC
+
 // mendefinisikan pin Servo pada ESP32
 #define pin_Servo  26
 
@@ -102,9 +106,7 @@ char Buffer_Send[15];
 
 String myString;
 
-// IP Address dan Port PC Anda
-const char * udpAddress = "192.168.100.24"; // Ip Address PC
-const int udpPort = 8080;                   // UDP Port PC
+
 
 //create UDP instance
 WiFiUDP udp;
@@ -112,8 +114,24 @@ WiFiUDP udp;
 // Aliasing Library DHT -> dht
 DHT dht(pin_DHT, DHTTYPE);
 
+// Deklarasi Variabel LCD
+
+#include "LiquidCrystal_I2C.h"
+
+// atur jumlah Baris-Kolom LCD yang digunakan 
+int lcdColumns = 16;
+int lcdRows = 2;
+
+// address I2C LCD : 0x27.
+LiquidCrystal_I2C lcd(0x27, lcdColumns, lcdRows); 
+
 void setup(){
   Serial.begin(115200); // to monitor activity
+
+  // Inisialisasi LCD
+  lcd.init();
+  // Fungsi menyalakan backlight LCD
+  lcd.backlight();
 
   // Inisialisasi start Servo 
   myservo.attach(pin_Servo);
@@ -134,13 +152,27 @@ void setup(){
 
   while(WiFi.status() != WL_CONNECTED)
   {
+    lcd.setCursor(0,0);
+    lcd.print("Menghubungkan");
+    lcd.setCursor(0,1);
+    lcd.print("Wifi..");
     Serial.print("."); delay(500);  
+    lcd.clear();
   }
+
+  lcd.clear();
+
   Serial.println("");
   Serial.print("Connected to ");
   Serial.println(ssid);
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
+
+  lcd.setCursor(0,0);
+  lcd.print("IP ESP32 :");
+  lcd.setCursor(0,1);
+  lcd.print(WiFi.localIP());
+  
   delay(2000);
   
   // Inisialisasi UDP dan memulai transfer data
@@ -210,7 +242,6 @@ void read_DHT(){
     return;
   }
   SUHU = t;
-  Serial.println(SUHU);
 }
 
 void read_US(){
@@ -244,14 +275,14 @@ void read_US(){
 
 void ctrl_LED(){
   if(LED4status)
-  {digitalWrite(pin_Led_4, HIGH);Serial.println("LED 4 High");}
+  {digitalWrite(pin_Led_4, HIGH);Serial.print("LED 4 High | ");}
   else
-  {digitalWrite(pin_Led_4, LOW);Serial.println("LED 4 Low");}
+  {digitalWrite(pin_Led_4, LOW);Serial.print("LED 4 Low | ");}
   
   if(LED3status)
-  {digitalWrite(pin_Led_3, HIGH);Serial.println("LED 3 High");}
+  {digitalWrite(pin_Led_3, HIGH);Serial.print("LED 3 High | ");}
   else
-  {digitalWrite(pin_Led_3, LOW);Serial.println("LED 3 Low");}
+  {digitalWrite(pin_Led_3, LOW);Serial.print("LED 3 Low | ");}
 }
 
 void StringOperate(String input) {

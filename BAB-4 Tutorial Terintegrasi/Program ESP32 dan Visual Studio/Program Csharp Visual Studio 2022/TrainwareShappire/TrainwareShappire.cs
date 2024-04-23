@@ -73,7 +73,7 @@ namespace TrainwareShappire
                     listbox_rec.Items.Add(RemoteIpEndPoint.Address.ToString() + " : " + returnData.ToString());
                     listbox_rec.SelectedIndex = listbox_rec.Items.Count - 1;
                     listbox_rec.SelectedIndex = -1;
-                    StatusRec.Text = LED3.ToString() + " ; " + LED4.ToString();
+                    StatusRec.Text = returnData.ToString();
                     buffer = returnData.Split('#');
                     POT = Convert.ToInt32(buffer[0]);
                     SUHU = Convert.ToInt32(buffer[1]);
