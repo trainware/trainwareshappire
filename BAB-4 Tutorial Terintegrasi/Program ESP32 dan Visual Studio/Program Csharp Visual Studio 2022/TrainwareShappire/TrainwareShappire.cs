@@ -81,7 +81,20 @@ namespace TrainwareShappire
                     LED3 = Convert.ToInt32(buffer[3]);
                     LED4 = Convert.ToInt32(buffer[4]);
 
-                    CirBarPOT.Text = buffer[0];
+                    if(POT >= 80)
+                    {
+                        alertIMG(true);
+                        CirBarPOT.ProgressColor = System.Drawing.Color.FromArgb(((int)(((byte)(243)))), ((int)(((byte)(181)))), ((int)(((byte)(25)))));
+                    }
+                    else
+                    {
+                        alertIMG(false);
+                        CirBarPOT.ProgressColor = System.Drawing.Color.FromArgb(((int)(((byte)(9)))), ((int)(((byte)(106)))), ((int)(((byte)(175)))));
+                    }
+
+
+                    CirBarPOT.Text = buffer[0] + " %";
+                    CirBarPOT.Value = POT;
                     suhuDHT.Text = SUHU.ToString() + " °C";
                     distUS.Text = JARAK.ToString() + " CM";
 

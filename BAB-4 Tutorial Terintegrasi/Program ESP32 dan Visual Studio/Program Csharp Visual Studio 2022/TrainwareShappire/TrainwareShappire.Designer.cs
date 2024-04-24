@@ -561,6 +561,7 @@
             this.CirBarPOT.SecondaryFont = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.CirBarPOT.Size = new System.Drawing.Size(212, 212);
             this.CirBarPOT.StartAngle = 270;
+            this.CirBarPOT.Step = 1;
             this.CirBarPOT.SubscriptColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
             this.CirBarPOT.SubscriptMargin = new System.Windows.Forms.Padding(10, -35, 0, 0);
             this.CirBarPOT.SubscriptText = "";
@@ -570,7 +571,7 @@
             this.CirBarPOT.TabIndex = 28;
             this.CirBarPOT.Text = "3,3 V";
             this.CirBarPOT.TextMargin = new System.Windows.Forms.Padding(0);
-            this.CirBarPOT.Value = 68;
+            this.CirBarPOT.Value = 25;
             // 
             // label5
             // 

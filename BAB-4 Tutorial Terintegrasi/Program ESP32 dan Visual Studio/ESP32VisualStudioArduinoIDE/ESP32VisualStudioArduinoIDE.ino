@@ -224,6 +224,7 @@ void loop(){
 void read_POT(){
   // Fungsi membaca nilai Potensiometer
   POT = analogRead(pin_Pot);
+  POT = map(POT, 0, 4095, 0, 100);
   Serial.print("pot val: ");
   Serial.println(POT);
 }
